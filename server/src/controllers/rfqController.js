@@ -101,7 +101,7 @@ export const getRfqById = async (req, res, next) => {
     let quotations = [];
     let myQuotation = null;
 
-    if (currentUserId && rfq.buyerId === currentUserId) {
+    if (currentUserId && Number(rfq.buyerId) === Number(currentUserId)) {
       quotations = await prisma.quotation.findMany({
         where: { rfqId: id },
         include: {
@@ -237,7 +237,7 @@ export const deleteRfq = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'RFQ not found.' });
     }
 
-    if (rfq.buyerId !== buyerId) {
+    if (Number(rfq.buyerId) !== Number(buyerId)) {
       return res.status(403).json({ success: false, message: 'Forbidden. You do not own this RFQ.' });
     }
 
