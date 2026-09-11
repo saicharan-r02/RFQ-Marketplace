@@ -2,11 +2,12 @@
     "name": "rfq-server",
     "version": "1.0.0",
     "type": "module",
-    "description": "B2B RFQ Marketplace Backend API with Socket.io & MySQL",
+    "description": "B2B RFQ Marketplace Backend API with Socket.io & SQLite",
     "main": "src/index.js",
     "scripts": {
         "dev": "node --watch src/index.js",
         "start": "node src/index.js",
+        "build": "echo \"Backend build not required for this Express/Prisma project.\"",
         "prisma:generate": "prisma generate",
         "prisma:push": "prisma db push",
         "prisma:studio": "prisma studio",
