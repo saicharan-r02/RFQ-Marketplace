@@ -1,14 +1,9 @@
-import { Server as SocketIOServer, Socket } from 'socket.io';
-import { Server as HTTPServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 import jwt from 'jsonwebtoken';
 
-let io: SocketIOServer | null = null;
-interface TokenPayload {
-    id: number;
-    role: 'BUYER' | 'SUPPLIER';
-    email: string;
-}
-export const initSocket = (httpServer: HTTPServer, clientUrl: string): SocketIOServer => {
+let io = null;
+
+export const initSocket = (httpServer, clientUrl) => {
     io = new SocketIOServer(httpServer, {
         cors: {
             origin: clientUrl || 'http://localhost:5173',
@@ -16,14 +11,14 @@ export const initSocket = (httpServer: HTTPServer, clientUrl: string): SocketIOS
             credentials: true,
         },
     });
-    io.use((socket: Socket, next) => {
+    io.use((socket, next) => {
         const token = socket.handshake.auth.token;
         if (!token) {
             return next();
         }
         try {
             const secret = process.env.JWT_SECRET || 'super_secret_jwt_key_rfq_marketplace_2026';
-            const decoded = jwt.verify(token, secret) as TokenPayload;
+            const decoded = jwt.verify(token, secret);
             socket.data.user = decoded;
             next();
         } catch (err) {
@@ -31,9 +26,8 @@ export const initSocket = (httpServer: HTTPServer, clientUrl: string): SocketIOS
         }
     });
 
-    io.on('connection', (socket: Socket) => {
+    io.on('connection', (socket) => {
         const user = socket.data.user;
-
         if (user) {
             socket.join(`user_${user.id}`);
             socket.join(`role_${user.role}`);
@@ -42,18 +36,17 @@ export const initSocket = (httpServer: HTTPServer, clientUrl: string): SocketIOS
     });
     return io;
 };
-export const sendToUser = (userId: number, event: string, data: any): void => {
+export const sendToUser = (userId, event, data) => {
     if (io) {
         io.to(`user_${userId}`).emit(event, data);
     }
 };
-export const broadcastRole = (role: 'BUYER' | 'SUPPLIER', event: string, data: any): void => {
+export const broadcastRole = (role, event, data) => {
     if (io) {
         io.to(`role_${role}`).emit(event, data);
     }
 };
-
-export const broadcastAll = (event: string, data: any): void => {
+export const broadcastAll = (event, data) => {
     if (io) {
         io.emit(event, data);
     }
