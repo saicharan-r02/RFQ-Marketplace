@@ -125,24 +125,40 @@ export const updateQuotationStatus = async (req, res, next) => {
         }
 
         // Ensure the buyer owns the RFQ being quoted
-        if (quotation.rfq.buyerId !== buyerId) {
+        if (Number(quotation.rfq.buyerId) !== Number(buyerId)) {
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden. You do not own the RFQ for this quotation.',
             });
         }
 
-        // If accepted, update the quotation and mark RFQ as AWARDED
+        let rfqUpdateData = null;
+        if (status === 'ACCEPTED') {
+            rfqUpdateData = { status: 'AWARDED' };
+        } else if (status === 'REJECTED' && quotation.status === 'ACCEPTED') {
+            const otherAccepted = await prisma.quotation.findFirst({
+                where: {
+                    rfqId: quotation.rfqId,
+                    id: { not: id },
+                    status: 'ACCEPTED',
+                },
+            });
+            if (!otherAccepted) {
+                rfqUpdateData = { status: 'OPEN' };
+            }
+        }
+
+        // Execute transaction
         const [updatedQuotation] = await prisma.$transaction([
             prisma.quotation.update({
                 where: { id },
                 data: { status },
             }),
-            ...(status === 'ACCEPTED'
+            ...(rfqUpdateData
                 ? [
                     prisma.rFQ.update({
                         where: { id: quotation.rfqId },
-                        data: { status: 'AWARDED' },
+                        data: rfqUpdateData,
                     }),
                 ]
                 : []),
