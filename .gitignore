@@ -21,3 +21,6 @@ yarn-error.log*
 .idea/
 .DS_Store
 Thumbs.db
+# SQLite database (generated locally via seed)
+*.db
+*.db-journal
