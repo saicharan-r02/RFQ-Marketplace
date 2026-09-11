@@ -1,28 +1,10 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
   provider = "prisma-client-js"
-}
-
-enum Role {
-  BUYER
-  SUPPLIER
-}
-
-enum RFQStatus {
-  OPEN
-  UNDER_REVIEW
-  CLOSED
-  AWARDED
-}
-
-enum QuoteStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
 }
 
 model User {
@@ -31,37 +13,31 @@ model User {
   password      String
   name          String
   companyName   String
-  role          Role
+  role          String
   phone         String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   rfqs          RFQ[]          @relation("BuyerRFQs")
   quotations    Quotation[]    @relation("SupplierQuotes")
   notifications Notification[]
-
-  @@index([role])
 }
 
 model RFQ {
   id               Int          @id @default(autoincrement())
-  title            String       // Product or Service name
-  description      String       @db.Text
-  category         String       // Electronics, Construction, Logistics, Packaging, etc.
+  title            String
+  description      String
+  category         String
   quantity         Int
-  unit             String       // Units, Tons, Pieces, Liters, etc.
+  unit             String
   deliveryLocation String
   deadline         DateTime
-  targetBudget     Decimal?     @db.Decimal(12, 2)
-  status           RFQStatus    @default(OPEN)
+  targetBudget     Float?
+  status           String       @default("OPEN")
   buyerId          Int
   buyer            User         @relation("BuyerRFQs", fields: [buyerId], references: [id], onDelete: Cascade)
   quotations       Quotation[]
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
-
-  @@index([buyerId])
-  @@index([status])
-  @@index([category])
 }
 
 model Quotation {
@@ -70,17 +46,15 @@ model Quotation {
   rfq          RFQ         @relation(fields: [rfqId], references: [id], onDelete: Cascade)
   supplierId   Int
   supplier     User        @relation("SupplierQuotes", fields: [supplierId], references: [id], onDelete: Cascade)
-  price        Decimal     @db.Decimal(12, 2)
-  deliveryDays Int         // Estimated delivery in days
+  price        Float
+  deliveryDays Int
   validUntil   DateTime?
-  notes        String      @db.Text
-  status       QuoteStatus @default(PENDING)
+  notes        String
+  status       String      @default("PENDING")
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
-  @@unique([rfqId, supplierId]) // A supplier can only submit 1 quotation per RFQ
-  @@index([supplierId])
-  @@index([rfqId])
+  @@unique([rfqId, supplierId])
 }
 
 model Notification {
@@ -89,10 +63,8 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   message   String
-  type      String   // NEW_QUOTE, QUOTE_ACCEPTED, QUOTE_REJECTED, RFQ_UPDATE
+  type      String
   read      Boolean  @default(false)
   link      String?
   createdAt DateTime @default(now())
-
-  @@index([userId])
 }
