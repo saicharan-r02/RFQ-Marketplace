@@ -29,3 +29,16 @@ export const requireRole = (allowedRoles) => {
         next();
     };
 };
+// Optional auth: populates req.user if token present, but does NOT block if missing
+export const optionalAuth = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return next();
+    try {
+        const secret = process.env.JWT_SECRET || 'super_secret_jwt_key_rfq_marketplace_2026';
+        req.user = jwt.verify(token, secret);
+        next();
+    } catch (err) {
+        next(); // Invalid token => just skip, don't block
+    }
+};
