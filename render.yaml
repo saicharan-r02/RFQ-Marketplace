@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: rfq-marketplace-api
+    env: node
+    plan: free
+    buildCommand: |
+      npm install
+      cd server && npm install
+      cd server && npx prisma generate
+      cd server && npx prisma db push
+      cd server && npm run seed
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CLIENT_URL
+        value: https://rfq-marketplace.netlify.app
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
