@@ -31,15 +31,22 @@ export const initSocket = (httpServer, allowedOrigins) => {
             next(new Error('Authentication error'));
         }
     });
-
     io.on('connection', (socket) => {
-        const user = socket.data.user;
-        if (user) {
-            socket.join(`user_${user.id}`);
-            socket.join(`role_${user.role}`);
-        }
-        socket.on('disconnect', () => { });
+    const user = socket.data.user;
+
+    if (user) {
+        console.log(
+            `Socket connected: user=${user.id}, role=${user.role}, socket=${socket.id}`
+        );
+        socket.join(`user_${user.id}`);
+        socket.join(`role_${user.role}`);
+    }
+    socket.on('disconnect', (reason) => {
+        console.log(
+            `Socket disconnected: ${socket.id}, reason=${reason}`
+        );
     });
+});
     return io;
 };
 export const sendToUser = (userId, event, data) => {
