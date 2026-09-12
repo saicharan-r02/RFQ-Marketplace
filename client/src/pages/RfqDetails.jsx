@@ -4,6 +4,7 @@ import API from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { ArrowLeft, Building2, MapPin, Calendar, DollarSign, Truck, CheckCircle2, XCircle, Clock, Send, AlertCircle, MessageSquare, ShieldCheck } from 'lucide-react';
+import QuoteComparisonChart from '../components/QuoteComparisonChart';
 
 export default function RfqDetails() {
     const { id } = useParams();
@@ -320,6 +321,10 @@ export default function RfqDetails() {
                                 <span className="text-xs text-emerald-400/90">A supplier proposal has been accepted. The winning quotation is marked Completed below.</span>
                             </div>
                         </div>
+                    )}
+
+                    {quotations.length > 0 && (
+                        <QuoteComparisonChart quotations={quotations} targetBudget={rfq.targetBudget} />
                     )}
 
                     {quotations.length === 0 ? (
