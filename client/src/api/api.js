@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'https://rfq-marketplace.onrender.com/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://rfq-marketplace-api-1e71.onrender.com/api',
     headers: {
         'Content-Type': 'application/json',
     },

@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (token && user) {
-            const serverUrl = import.meta.env.VITE_SERVER_URL || 'https://rfq-marketplace.onrender.com';
+            const serverUrl = import.meta.env.VITE_SERVER_URL || 'https://rfq-marketplace-api-1e71.onrender.com';
             const newSocket = io(serverUrl, {
                 auth: { token },
             });

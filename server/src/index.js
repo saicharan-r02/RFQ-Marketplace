@@ -20,6 +20,10 @@ app.use(cors({ origin: CLIENT_URL, credentials: true, }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'OK', message: 'RFQ Marketplace API root. Use /api/health or /api/auth, /api/rfqs, /api/quotations.' });
+});
+
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'OK', message: 'B2B RFQ Marketplace API is running' });
 });
