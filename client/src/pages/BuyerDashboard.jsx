@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/api';
 import { useSocket } from '../context/SocketContext';
+import AnalyticsCharts from '../components/AnalyticsCharts';
 import { PlusCircle, Package, Clock, CheckCircle2, MessageSquare, MapPin, Calendar, Trash2, ExternalLink, Layers, AlertCircle } from 'lucide-react';
 
 export default function BuyerDashboard() {
@@ -9,6 +10,7 @@ export default function BuyerDashboard() {
     const [rfqs, setRfqs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('ALL');
+    const [quoteFilter, setQuoteFilter] = useState('ALL');
     const [deletingId, setDeletingId] = useState(null);
     const [error, setError] = useState('');
 
@@ -121,9 +123,14 @@ export default function BuyerDashboard() {
     const openCount = rfqs.filter((r) => r.status === 'OPEN').length;
     const awardedCount = rfqs.filter((r) => r.status === 'AWARDED').length;
     const totalQuotesReceived = rfqs.reduce((acc, curr) => acc + (curr._count?.quotations || 0), 0);
+    const acceptedCount = rfqs.reduce((acc, curr) => acc + (curr.quotations || []).filter((q) => q.status === 'ACCEPTED').length, 0);
+    const rejectedCount = rfqs.reduce((acc, curr) => acc + (curr.quotations || []).filter((q) => q.status === 'REJECTED').length, 0);
+    const pendingCount = rfqs.reduce((acc, curr) => acc + (curr.quotations || []).filter((q) => q.status === 'PENDING').length, 0);
+    const quoteFilterOptions = ['ALL', 'ACCEPTED', 'REJECTED', 'PENDING'];
     const filteredRfqs = rfqs.filter((r) => {
-        if (filter === 'ALL') return true;
-        return r.status === filter;
+        if (filter !== 'ALL' && r.status !== filter) return false;
+        if (quoteFilter !== 'ALL' && !(r.quotations || []).some((q) => q.status === quoteFilter)) return false;
+        return true;
     });
 
     const getStatusBadge = (status) => {
@@ -189,27 +196,66 @@ export default function BuyerDashboard() {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                {['ALL', 'OPEN', 'AWARDED', 'CLOSED'].map((f) => (
-                    <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${filter === f
-                                ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                            }`}
-                    >
-                        {f === 'ALL' ? 'All RFQs' : f.charAt(0) + f.slice(1).toLowerCase()}
-                    </button>
-                ))}
-            </div>
-
             {error && (
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm flex items-center gap-2">
                     <AlertCircle className="w-5 h-5 shrink-0" />
                     <span>{error}</span>
                 </div>
             )}
+
+            {!loading && <AnalyticsCharts rfqs={rfqs} />}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+                    {['ALL', 'OPEN', 'AWARDED', 'CLOSED'].map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${filter === f
+                                    ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                                }`}
+                        >
+                            {f === 'ALL' ? 'All RFQs' : f.charAt(0) + f.slice(1).toLowerCase()}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+                    {quoteFilterOptions.map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setQuoteFilter(f)}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${quoteFilter === f
+                                    ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                                }`}
+                        >
+                            {f === 'ALL' ? 'All Quotes' : f.charAt(0) + f.slice(1).toLowerCase()}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3">
+                    <div className="text-[11px] text-slate-500">Accepted</div>
+                    <div className="text-sm font-bold text-emerald-400 mt-1">{acceptedCount}</div>
+                </div>
+                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3">
+                    <div className="text-[11px] text-slate-500">Rejected</div>
+                    <div className="text-sm font-bold text-rose-400 mt-1">{rejectedCount}</div>
+                </div>
+                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3">
+                    <div className="text-[11px] text-slate-500">Pending</div>
+                    <div className="text-sm font-bold text-amber-400 mt-1">{pendingCount}</div>
+                </div>
+                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3">
+                    <div className="text-[11px] text-slate-500">Total Quotes</div>
+                    <div className="text-sm font-bold text-indigo-400 mt-1">{totalQuotesReceived}</div>
+                </div>
+            </div>
+
             {loading ? (
                 <div className="py-20 flex justify-center">
                     <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
