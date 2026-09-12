@@ -1,106 +1,99 @@
-# B2B RFQ Marketplace
+<h2>Live Demo</h2>
 
-A full-stack mini B2B RFQ marketplace where buyers can publish RFQs and suppliers can discover open RFQs, submit quotations, and track quotation outcomes.
+  [Click here to view the live demo](https://b2b-rfq-marketplace.netlify.app/)
 
-## Architecture
+<h1>User Login – Buyer & Supplier Authentication</h1>
 
-The application is organized as a Vite + React frontend with a Node.js + Express + Prisma backend. The backend uses Socket.IO for live notifications, JWT for authentication, and Zod for validation.
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/User%20Login%20%E2%80%93%20Buyer%20and%20Supplier%20Authentication.png)
 
-The backend and the Prisma schema store the main application entities:
+<h1>User Registration – Account Creation</h1>
 
-- User
-- RFQ
-- Quotation
-- Notification
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/User%20Registration%20%E2%80%93%20Buyer%26Supplier%20Account%20Creation.png)
 
-The UI is role-aware. Buyers can post and manage RFQs, while suppliers can browse RFQs and submit quotations.
+<h1>Buyer Command Center – RFQ Management Dashboard</h1>
 
-## Tech Stack
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Command%20Center%20%E2%80%93%20RFQ%20Management%20Dashboard.png)
 
-- Frontend: React 19, Vite, Axios, React Router, Socket.IO client, lucide-react
-- Backend: Node.js, Express, JWT, Socket.IO, Zod
-- Database: Prisma ORM with SQLite by default
-- Styling: custom React UI with Tailwind-ready styling
+<h1>Buyer Analytics – Procurement Insights Dashboard</h1>
 
-## Local Setup
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Analytics%20%E2%80%93%20Procurement%20Insights%20Dashboard.png)
 
-1. Install dependencies from the workspace root:
+<h1>Buyer Procurement Analytics – Category Spend & Status Overview</h1>
 
-   ```sh
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Procurement%20Analytics%20%E2%80%93%20Category%20Spend%20%26%20Status%20Overview.png)
+
+<h1>Create RFQ – Request for Quotation Form</h1>
+
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Create%20RFQ%20%E2%80%93%20Request%20for%20Quotation%20Form.png)
+
+<h1>RFQ Marketplace – Supplier RFQ Discovery</h1>
+
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/RFQ%20Marketplace%20%E2%80%93%20Supplier%20RFQ%20Discovery.png)
+
+<h1>Supplier Quotations – Quote Management Dashboard</h1>
+
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Supplier%20Quotations%20%E2%80%93%20Quote%20Management%20Dashboard.png)
+
+<h1>Supplier Analytics – Bid Performance Dashboard</h1>
+
+![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Supplier%20Analytics%20%E2%80%93%20Bid%20Performance%20Dashboard.png)
+
+## Installation and Setup
+
+### Backend Repository Setup
+
+1. **Clone the Backend Repository:**
+   ```bash
+   git clone https://github.com/saicharan-r02/RFQ-Marketplace
+   cd RFQ-Marketplace/server
+   ```
+   
+2. **Install Dependencies:**
+   ```bash
    npm install
-   cd server && npm install
-   cd ../client && npm install
    ```
 
-2. Create a local environment file for the backend:
-
-   ```sh
-   cp .env.example server/.env
+3. **Environment Variables Setup:**
+   ```bash
+   PORT=5000
+   DATABASE_URL="file:./dev.db"
+   JWT_SECRET=your_super_secret_jwt_key_here
+   CLIENT_URL=http://localhost:5173
    ```
 
-   Or copy the values manually into the server folder.
-
-3. Generate Prisma client and push the schema:
-
-   ```sh
-   cd server
+4. **Database Migration and Seeder:**
+   ```bash
    npx prisma generate
    npx prisma db push
    npm run seed
    ```
-
-4. Start the backend:
-
-   ```sh
-   cd server
+     
+5. **Start the Backend Server:**
+   ```bash
    npm run dev
+   # The backend will run on: http://localhost:5000
    ```
 
-5. Start the frontend:
+### Frontend Repository Setup
 
-   ```sh
-   cd client
-   npm run dev
+1. **Clone the Frontend Repository:**
+   ```bash
+   git clone https://github.com/saicharan-r02/RFQ-Marketplace
+   cd RFQ-Marketplace/client
    ```
 
-6. The frontend runs on port 5173 by default and the backend runs on port 5000.
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Demo Accounts
+3. **Environment Variables Setup:**
+   ```bash
+   VITE_API_URL=http://localhost:5000/api
+   ```
 
-The seed script creates these accounts:
-
-- Buyer: `buyer@apexind.com` / `Password123!`
-- Supplier 1: `supplier1@globaltech.com` / `Password123!`
-- Supplier 2: `supplier2@primepack.com` / `Password123!`
-
-## API and UI Highlights
-
-- Buyer: create, edit, view, delete, and manage RFQs.
-- Supplier: browse RFQs, submit quotations, and see previously submitted quotations.
-- Buyer: accept or reject quotations received for an RFQ.
-- Live notifications via Socket.IO for quotation and RFQ events.
-
-## Deployment Notes
-
-This repository is structured for local development and can be adapted to a production deployment by deploying the Express API and static Vite build separately.
-
-Recommended production approach:
-
-- Deploy the Express API to a Node-capable platform.
-- Deploy the Vite frontend as a static production site.
-- The safest default for this repository is SQLite for local demo work and a static Vite build on Netlify, with Express hosted on Render or any Node-capable platform.
-
-A concrete production mapping for this repo is:
-
-- Backend: Render
-- Frontend: Netlify
-- Database: keep SQLite locally, or migrate Prisma datasource to a hosted SQL provider later
-
-The existing Prisma datasource currently points to a local SQLite file in the Prisma schema. That is fine for this assignment and demo workflows, but a production deployment should move to a hosted database and update the Prisma datasource URL.
-
-## Assumptions and Limitations
-
-- The app currently uses the SQLite demo database stored in the Prisma folder.
-- Socket.IO uses the JWT token passed on socket authentication.
-- The app treats the RFQ status cycle as OPEN, AWARDED, CLOSED, and PENDING quotations.
-- No payment or advanced approval workflow is implemented.
+4. **Start the Frontend Development Server:**
+   ```bash
+   npm run dev
+   # The frontend will run on: http://localhost:5173
+   ```
