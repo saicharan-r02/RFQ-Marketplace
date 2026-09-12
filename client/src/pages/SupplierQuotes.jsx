@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/api';
+import { useSocket } from '../context/SocketContext';
 import { FileText, Building2, ExternalLink, Clock, CheckCircle2, XCircle, DollarSign, Truck } from 'lucide-react';
 
 export default function SupplierQuotes() {
+    const { socket } = useSocket();
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,29 @@ export default function SupplierQuotes() {
     useEffect(() => {
         fetchMyQuotes();
     }, []);
+
+    useEffect(() => {
+    if (!socket) {
+        return;
+    }
+    const handleQuotationStatusUpdated = (data) => {
+        console.log(
+            'SupplierQuotes: realtime quotation update',
+            data
+        );
+        fetchMyQuotes();
+    };
+    socket.on(
+        'quotation_status_updated',
+        handleQuotationStatusUpdated
+    );
+    return () => {
+        socket.off(
+            'quotation_status_updated',
+            handleQuotationStatusUpdated
+        );
+    };
+}, [socket]);
 
     const getStatusBadge = (status) => {
         switch (status) {
