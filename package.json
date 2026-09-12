@@ -12,5 +12,10 @@
     },
     "devDependencies": {
         "concurrently": "^9.1.0"
+    },
+    "dependencies": {
+        "@nivo/bar": "^0.99.0",
+        "@nivo/line": "^0.99.0",
+        "@nivo/pie": "^0.99.0"
     }
 }
