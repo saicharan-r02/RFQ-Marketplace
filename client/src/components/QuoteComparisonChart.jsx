@@ -107,11 +107,8 @@ export default function QuoteComparisonChart({ quotations = [], targetBudget = 0
                         <BarChart2 className="w-5 h-5" />
                     </span>
                     <div>
-                        <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                        <h3 className="text-base font-bold text-white tracking-tight">
                             Bid Price Comparison Chart
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">
-                                Nivo Bar
-                            </span>
                         </h3>
                         <p className="text-xs text-slate-400">Comparing supplier quotations against your Target Budget of ${budgetNum.toLocaleString()}</p>
                     </div>

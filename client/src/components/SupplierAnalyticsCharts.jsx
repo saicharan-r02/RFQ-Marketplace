@@ -158,11 +158,8 @@ export default function SupplierAnalyticsCharts({ quotes = [] }) {
                             <TrendingUp className="w-5 h-5" />
                         </span>
                         <div>
-                            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-white tracking-tight">
                                 Supplier Bid Performance & Analytics
-                                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">
-                                    Nivo Visuals
-                                </span>
                             </h2>
                             <p className="text-xs text-slate-400 mt-0.5">Track your win rates, pricing competitiveness, and quote history</p>
                         </div>
