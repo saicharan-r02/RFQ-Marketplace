@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../api/api';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { ArrowLeft, Building2, MapPin, Calendar, DollarSign, Truck, CheckCircle2, XCircle, Clock, Send, AlertCircle, MessageSquare, ShieldCheck } from 'lucide-react';
 
 export default function RfqDetails() {
     const { id } = useParams();
     const { user, role, isAuthenticated } = useAuth();
+    const { socket } = useSocket();
     const navigate = useNavigate();
 
     const [rfq, setRfq] = useState(null);
@@ -38,14 +40,82 @@ export default function RfqDetails() {
         fetchRfqDetails(true);
     }, [id]);
 
+    useEffect(() => {
+    if (!socket) {
+        return;
+    }
+
+    const handleQuotationStatusUpdated = (data) => {
+        console.log(
+            'RfqDetails: quotation status update received',
+            data
+        );
+
+        if (Number(data.rfqId) !== Number(id)) {
+            return;
+        }
+        fetchRfqDetails(false);
+    };
+
+    const handleNewQuotation = (data) => {
+        console.log(
+            'RfqDetails: new quotation received',
+            data
+        );
+
+        if (Number(data.rfqId) !== Number(id)) {
+            return;
+        }
+        fetchRfqDetails(false);
+    };
+
+    const handleRfqUpdated = (data) => {
+        console.log(
+            'RfqDetails: RFQ updated',
+            data
+        );
+
+        if (Number(data.id) !== Number(id)) {
+            return;
+        }
+        fetchRfqDetails(false);
+    };
+    socket.on(
+        'quotation_status_updated',
+        handleQuotationStatusUpdated
+    );
+    socket.on(
+        'new_quotation',
+        handleNewQuotation
+    );
+    socket.on(
+        'rfq_updated',
+        handleRfqUpdated
+    );
+    return () => {
+        socket.off(
+            'quotation_status_updated',
+            handleQuotationStatusUpdated
+        );
+
+        socket.off(
+            'new_quotation',
+            handleNewQuotation
+        );
+
+        socket.off(
+            'rfq_updated',
+            handleRfqUpdated
+        );
+    };
+}, [socket, id]);
+
     const handleQuoteStatus = async (quoteId, status) => {
         const actionLabel = status === 'ACCEPTED' ? 'Accept' : 'Reject';
 
         try {
             setUpdatingQuoteId(quoteId);
             setActionSuccess('');
-
-            // Optimistically update UI immediately so user sees 'Completed' right away
             setQuotations((prev) =>
                 prev.map((q) => {
                     if (q.id === quoteId) {
@@ -65,11 +135,9 @@ export default function RfqDetails() {
                     ? 'Quotation accepted! Status marked as Completed (Awarded Deal).'
                     : 'Quotation rejected! Status marked as Completed (Rejected).'
             );
-            // Silent background refresh
             await fetchRfqDetails(false);
         } catch (err) {
             console.error('Error updating quotation status:', err);
-            // Revert state on error
             await fetchRfqDetails(false);
             alert(err.response?.data?.message || `Failed to ${actionLabel.toLowerCase()} quotation.`);
         } finally {
