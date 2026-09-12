@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/api';
+import { useSocket } from '../context/SocketContext';
 import { PlusCircle, Package, Clock, CheckCircle2, MessageSquare, MapPin, Calendar, Trash2, ExternalLink, Layers, AlertCircle } from 'lucide-react';
 
 export default function BuyerDashboard() {
+    const { socket } = useSocket();
     const [rfqs, setRfqs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('ALL');
@@ -25,6 +27,80 @@ export default function BuyerDashboard() {
     useEffect(() => {
         fetchBuyerRfqs();
     }, []);
+
+    useEffect(() => {
+    if (!socket) {
+        return;
+    }
+    const handleNewQuotation = (data) => {
+        console.log(
+            'BuyerDashboard: new quotation received',
+            data
+        );
+        fetchBuyerRfqs();
+    };
+
+    const handleRfqUpdated = (updatedRfq) => {
+        console.log(
+            'BuyerDashboard: RFQ updated',
+            updatedRfq
+        );
+
+        setRfqs((previous) =>
+            previous.map((rfq) =>
+                Number(rfq.id) ===
+                Number(updatedRfq.id)
+                    ? {
+                          ...rfq,
+                          ...updatedRfq,
+                      }
+                    : rfq
+            )
+        );
+    };
+
+    const handleRfqDeleted = (data) => {
+        console.log(
+            'BuyerDashboard: RFQ deleted',
+            data
+        );
+
+        setRfqs((previous) =>
+            previous.filter(
+                (rfq) =>
+                    Number(rfq.id) !==
+                    Number(data.id)
+            )
+        );
+    };
+
+    socket.on(
+        'new_quotation',
+        handleNewQuotation
+    );
+    socket.on(
+        'rfq_updated',
+        handleRfqUpdated
+    );
+    socket.on(
+        'rfq_deleted',
+        handleRfqDeleted
+    );
+    return () => {
+        socket.off(
+            'new_quotation',
+            handleNewQuotation
+        );
+        socket.off(
+            'rfq_updated',
+            handleRfqUpdated
+        );
+        socket.off(
+            'rfq_deleted',
+            handleRfqDeleted
+        );
+    };
+}, [socket]);
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this RFQ? All associated quotations will be removed.')) {
