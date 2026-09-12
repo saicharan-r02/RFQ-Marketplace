@@ -14,9 +14,21 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
-initSocket(server, CLIENT_URL);
+const allowedOrigins = CLIENT_URL.split(',').map((origin) => origin.trim()).filter(Boolean);
 
-app.use(cors({ origin: CLIENT_URL, credentials: true, }));
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error(`CORS blocked origin: ${origin}`));
+        }
+    },
+    credentials: true,
+}));
+
+initSocket(server, allowedOrigins);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

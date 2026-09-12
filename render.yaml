@@ -16,7 +16,7 @@ services:
       - key: PORT
         value: 5000
       - key: CLIENT_URL
-        value: https://rfq-marketplace.netlify.app
+        value: https://rfq-marketplace.netlify.app,https://b2b-rfq-marketplace.netlify.app,http://localhost:5173
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN

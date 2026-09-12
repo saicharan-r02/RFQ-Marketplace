@@ -3,10 +3,16 @@ import jwt from 'jsonwebtoken';
 
 let io = null;
 
-export const initSocket = (httpServer, clientUrl) => {
+export const initSocket = (httpServer, allowedOrigins) => {
     io = new SocketIOServer(httpServer, {
         cors: {
-            origin: clientUrl || 'http://localhost:5173',
+            origin: (origin, callback) => {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error(`Socket CORS blocked origin: ${origin}`));
+                }
+            },
             methods: ['GET', 'POST', 'PATCH'],
             credentials: true,
         },
