@@ -237,7 +237,7 @@ export default function CreateRfq() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs sm:text-sm font-medium shadow-lg shadow-indigo-500/25 transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                            className="px-6 py-2.5 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs sm:text-sm font-medium shadow-lg shadow-indigo-500/25 transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                         >
                             {isSubmitting ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

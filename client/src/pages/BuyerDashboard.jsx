@@ -72,7 +72,7 @@ export default function BuyerDashboard() {
                 </div>
                 <Link
                     to="/buyer/create-rfq"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium text-sm rounded-xl shadow-lg shadow-indigo-500/20 transition cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium text-sm rounded-xl shadow-lg shadow-indigo-500/20 transition cursor-pointer"
                 >
                     <PlusCircle className="w-4 h-4" />
                     Create New RFQ
@@ -188,7 +188,7 @@ export default function BuyerDashboard() {
                                             <MapPin className="w-3.5 h-3.5" />
                                             Location:
                                         </span>
-                                        <span className="font-medium text-slate-200 truncate max-w-[150px]">{rfq.deliveryLocation}</span>
+                                        <span className="font-medium text-slate-200 truncate max-w-35">{rfq.deliveryLocation}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
