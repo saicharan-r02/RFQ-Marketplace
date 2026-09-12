@@ -4,39 +4,39 @@
 
 <h1>User Login – Buyer & Supplier Authentication</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/User%20Login%20%E2%80%93%20Buyer%20and%20Supplier%20Authentication.png)
+![Login Page](<public/User Login – Buyer and Supplier Authentication.png>)
 
 <h1>User Registration – Account Creation</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/User%20Registration%20%E2%80%93%20Buyer%26Supplier%20Account%20Creation.png)
+![Registration Page](<public/User Registration – Buyer and Supplier Account Creation.png>)
 
 <h1>Buyer Command Center – RFQ Management Dashboard</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Command%20Center%20%E2%80%93%20RFQ%20Management%20Dashboard.png)
+![Buyer Command Center](<public/Buyer Command Center – RFQ Management Dashboard.png>)
 
 <h1>Buyer Analytics – Procurement Insights Dashboard</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Analytics%20%E2%80%93%20Procurement%20Insights%20Dashboard.png)
+![Buyer Analytics](<public/Buyer Analytics – Procurement Insights Dashboard.png>)
 
 <h1>Buyer Procurement Analytics – Category Spend & Status Overview</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Buyer%20Procurement%20Analytics%20%E2%80%93%20Category%20Spend%20%26%20Status%20Overview.png)
+![Buyer Procurement Analytics](<public/Buyer Procurement Analytics – Category Spend & Status Overview.png>)
 
 <h1>Create RFQ – Request for Quotation Form</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Create%20RFQ%20%E2%80%93%20Request%20for%20Quotation%20Form.png)
+![Create RFQ](<public/Create RFQ – Request for Quotation Form.png>)
 
 <h1>RFQ Marketplace – Supplier RFQ Discovery</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/RFQ%20Marketplace%20%E2%80%93%20Supplier%20RFQ%20Discovery.png)
+![RFQ Marketplace](<public/RFQ Marketplace – Supplier RFQ Discovery.png>)
 
 <h1>Supplier Quotations – Quote Management Dashboard</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Supplier%20Quotations%20%E2%80%93%20Quote%20Management%20Dashboard.png)
+![Supplier Quotations](<public/Supplier Quotations – Quote Management Dashboard.png>)
 
 <h1>Supplier Analytics – Bid Performance Dashboard</h1>
 
-![Alt Text](https://github.com/saicharan-r02/RFQ-Marketplace/blob/main/public/Supplier%20Analytics%20%E2%80%93%20Bid%20Performance%20Dashboard.png)
+![Supplier Analytics](<public/Supplier Analytics – Bid Performance Dashboard.png>)
 
 ## Installation and Setup
 
