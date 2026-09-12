@@ -3,11 +3,18 @@ import { Link } from 'react-router-dom';
 import API from '../api/api';
 import { useSocket } from '../context/SocketContext';
 import { FileText, Building2, ExternalLink, Clock, CheckCircle2, XCircle, DollarSign, Truck } from 'lucide-react';
+import SupplierAnalyticsCharts from '../components/SupplierAnalyticsCharts';
 
 export default function SupplierQuotes() {
     const { socket } = useSocket();
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [quoteFilter, setQuoteFilter] = useState('ALL');
+
+    const acceptedCount = quotes.filter((q) => q.status === 'ACCEPTED').length;
+    const rejectedCount = quotes.filter((q) => q.status === 'REJECTED').length;
+    const pendingCount = quotes.filter((q) => q.status === 'PENDING').length;
+    const visibleQuotes = quotes.filter((q) => quoteFilter === 'ALL' || q.status === quoteFilter);
 
     const fetchMyQuotes = async () => {
         try {
@@ -82,11 +89,32 @@ export default function SupplierQuotes() {
                 <p className="text-sm text-slate-400 mt-1">Track the status and details of all quotation proposals you have submitted</p>
             </div>
 
+            {!loading && quotes.length > 0 && <SupplierAnalyticsCharts quotes={quotes} />}
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onClick={() => setQuoteFilter('ALL')} className={`rounded-2xl border p-3 text-left transition ${quoteFilter === 'ALL' ? 'bg-indigo-600/25 border-indigo-500 text-white' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:text-white'}`}>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">All</div>
+                    <div className="text-sm font-bold mt-1">{quotes.length}</div>
+                </button>
+                <button onClick={() => setQuoteFilter('ACCEPTED')} className={`rounded-2xl border p-3 text-left transition ${quoteFilter === 'ACCEPTED' ? 'bg-emerald-600/25 border-emerald-500 text-white' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:text-white'}`}>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Accepted</div>
+                    <div className="text-sm font-bold mt-1 text-emerald-400">{acceptedCount}</div>
+                </button>
+                <button onClick={() => setQuoteFilter('REJECTED')} className={`rounded-2xl border p-3 text-left transition ${quoteFilter === 'REJECTED' ? 'bg-rose-600/25 border-rose-500 text-white' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:text-white'}`}>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Rejected</div>
+                    <div className="text-sm font-bold mt-1 text-rose-400">{rejectedCount}</div>
+                </button>
+                <button onClick={() => setQuoteFilter('PENDING')} className={`rounded-2xl border p-3 text-left transition ${quoteFilter === 'PENDING' ? 'bg-amber-600/25 border-amber-500 text-white' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:text-white'}`}>
+                    <div className="text-[11px] uppercase tracking-wide text-slate-500">Pending</div>
+                    <div className="text-sm font-bold mt-1 text-amber-400">{pendingCount}</div>
+                </button>
+            </div>
+
             {loading ? (
                 <div className="py-20 flex justify-center">
                     <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
                 </div>
-            ) : quotes.length === 0 ? (
+            ) : visibleQuotes.length === 0 ? (
                 <div className="text-center py-20 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8">
                     <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
                     <h3 className="text-base font-semibold text-slate-200">No Quotations Submitted Yet</h3>
@@ -102,7 +130,7 @@ export default function SupplierQuotes() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {quotes.map((q) => (
+                    {visibleQuotes.map((q) => (
                         <div
                             key={q.id}
                             className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-lg transition hover:border-slate-700"
