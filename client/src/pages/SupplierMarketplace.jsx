@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/api';
-import { Search, Filter, MapPin, Calendar, Building2, ArrowUpRight, ShoppingBag, Clock, DollarSign } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Search, Filter, MapPin, Calendar, Building2, ArrowUpRight, ShoppingBag, Clock, DollarSign, CheckCircle2, XCircle } from 'lucide-react';
 
 const CATEGORIES = [
     'ALL',
@@ -18,6 +19,7 @@ const CATEGORIES = [
 ];
 
 export default function SupplierMarketplace() {
+    const { role } = useAuth();
     const [rfqs, setRfqs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -132,12 +134,12 @@ export default function SupplierMarketplace() {
                             <div>
 
                                 <div className="flex items-center justify-between gap-2 mb-3">
-                                    <span className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider bg-indigo-950/50 px-2.5 py-0.5 rounded-lg border border-indigo-800/40 truncate max-w-[170px]">
+                                    <span className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider bg-indigo-950/50 px-2.5 py-0.5 rounded-lg border border-indigo-800/40 truncate max-w-42.5">
                                         {rfq.category}
                                     </span>
                                     <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
                                         <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                                        <span className="truncate max-w-[120px]">{rfq.buyer?.companyName}</span>
+                                        <span className="truncate max-w-30">{rfq.buyer?.companyName}</span>
                                     </div>
                                 </div>
 
@@ -160,7 +162,7 @@ export default function SupplierMarketplace() {
                                             <MapPin className="w-3.5 h-3.5" />
                                             Delivery Location:
                                         </span>
-                                        <span className="font-medium text-slate-200 truncate max-w-[140px]">{rfq.deliveryLocation}</span>
+                                        <span className="font-medium text-slate-200 truncate max-w-35">{rfq.deliveryLocation}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -193,13 +195,23 @@ export default function SupplierMarketplace() {
                                     {rfq._count?.quotations || 0} quotes submitted
                                 </span>
 
-                                <Link
-                                    to={`/rfqs/${rfq.id}`}
-                                    className="flex items-center gap-1 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-3.5 py-1.5 rounded-xl shadow-md shadow-indigo-500/20 transition cursor-pointer"
-                                >
-                                    <span>Submit Quote</span>
-                                    <ArrowUpRight className="w-3.5 h-3.5" />
-                                </Link>
+                                {role === 'SUPPLIER' && rfq.myQuotation ? (
+                                    <Link
+                                        to={`/rfqs/${rfq.id}`}
+                                        className="flex items-center gap-1 text-xs font-semibold text-white bg-slate-700 hover:bg-slate-600 px-3.5 py-1.5 rounded-xl shadow-md transition cursor-pointer"
+                                    >
+                                        <span>{rfq.myQuotation.status === 'REJECTED' ? 'Not Selected' : 'View Quote'}</span>
+                                        {rfq.myQuotation.status === 'REJECTED' ? <XCircle className="w-3.5 h-3.5" /> : <ArrowUpRight className="w-3.5 h-3.5" />}
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        to={`/rfqs/${rfq.id}`}
+                                        className="flex items-center gap-1 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 px-3.5 py-1.5 rounded-xl shadow-md shadow-indigo-500/20 transition cursor-pointer"
+                                    >
+                                        <span>Submit Quote</span>
+                                        <ArrowUpRight className="w-3.5 h-3.5" />
+                                    </Link>
+                                )}
                             </div>
 
                         </div>

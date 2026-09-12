@@ -49,10 +49,35 @@ export const getAllRfqs = async (req, res, next) => {
       }),
     ]);
 
+    let responseRfqs = rfqs;
+    if (req.user?.role === 'SUPPLIER') {
+      const supplierId = req.user.id;
+      const rfqIds = rfqs.map((rfq) => rfq.id);
+
+      const myQuotations = await prisma.quotation.findMany({
+        where: {
+          supplierId,
+          rfqId: { in: rfqIds },
+        },
+        select: {
+          rfqId: true,
+          status: true,
+          id: true,
+          price: true,
+        },
+      });
+
+      const quoteByRfqId = new Map(myQuotations.map((q) => [q.rfqId, q]));
+      responseRfqs = rfqs.map((rfq) => ({
+        ...rfq,
+        myQuotation: quoteByRfqId.get(rfq.id) || null,
+      }));
+    }
+
     res.status(200).json({
       success: true,
       data: {
-        rfqs,
+        rfqs: responseRfqs,
         pagination: {
           total,
           page: pageNum,

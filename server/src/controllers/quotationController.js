@@ -45,22 +45,25 @@ export const submitQuotation = async (req, res, next) => {
             });
         }
 
-        // Upsert quotation: Create or update existing quote
-        const quotation = await prisma.quotation.upsert({
+        const existingQuotation = await prisma.quotation.findUnique({
             where: {
                 rfqId_supplierId: {
                     rfqId,
                     supplierId,
                 },
             },
-            update: {
-                price,
-                deliveryDays,
-                validUntil: validUntil ? new Date(validUntil) : null,
-                notes,
-                status: 'PENDING',
-            },
-            create: {
+        });
+
+        if (existingQuotation) {
+            return res.status(409).json({
+                success: false,
+                message: 'You already submitted a quotation for this RFQ. Visit the RFQ details page to review it.',
+            });
+        }
+
+        // Create quotation once
+        const quotation = await prisma.quotation.create({
+            data: {
                 rfqId,
                 supplierId,
                 price,
