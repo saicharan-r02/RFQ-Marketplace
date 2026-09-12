@@ -45,7 +45,9 @@ app.use('/api/rfqs', rfqRoutes);
 app.use('/api/quotations', quotationRoutes);
 app.use(errorHandler);
 
-server.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(
+        `Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`
+    );
     console.log(`Accepting requests from: ${CLIENT_URL}`);
 });
