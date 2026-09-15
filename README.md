@@ -8,7 +8,7 @@
 
 <h1>User Registration – Account Creation</h1>
 
-![Registration Page](<public/User Registration – Buyer and Supplier Account Creation.png>)
+![Registration Page](<public/User Registration – Buyer&Supplier Account Creation.png>)
 
 <h1>Buyer Command Center – RFQ Management Dashboard</h1>
 
