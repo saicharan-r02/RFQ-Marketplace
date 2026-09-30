@@ -5,11 +5,10 @@ import { authenticateToken, requireRole, optionalAuth } from '../middleware/auth
 import { validate, rfqSchema, quotationSchema } from '../validators/index.js';
 
 const router = Router();
-// Public routes (optionalAuth so logged-in users get role-specific data)
 router.get('/', optionalAuth, getAllRfqs);
 router.get('/buyer/my-rfqs', authenticateToken, requireRole(['BUYER']), getBuyerRfqs);
-router.get('/:id', optionalAuth, getRfqById); // Buyers see quotations, suppliers see their quote
-// Protected routes
+router.get('/:id', optionalAuth, getRfqById);
+
 router.post('/', authenticateToken, requireRole(['BUYER']), validate(rfqSchema), createRfq);
 router.put('/:id', authenticateToken, requireRole(['BUYER']), updateRfq);
 router.delete('/:id', authenticateToken, requireRole(['BUYER']), deleteRfq);
