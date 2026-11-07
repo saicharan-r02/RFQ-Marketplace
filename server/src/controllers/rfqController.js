@@ -7,7 +7,7 @@ export const getAllRfqs = async (req, res, next) => {
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.max(1, Math.min(50, parseInt(limit, 10) || 12));
-    const skip = (pageNum - 1) * limitNum;
+    const skip=(pageNum-1)*limitNum;
 
     const where = {};
     if (status && status !== 'ALL') {
@@ -32,39 +32,39 @@ export const getAllRfqs = async (req, res, next) => {
         skip,
         take: limitNum,
         orderBy: {
-          [sortBy]: order === 'asc' ? 'asc' : 'desc',
+          [sortBy]: order === 'asc' ? 'asc' : 'desc'
         },
         include: {
           buyer: {
             select: {
               id: true,
               companyName: true,
-              name: true,
+              name: true
             },
           },
           _count: {
-            select: { quotations: true },
-          },
-        },
-      }),
+            select: { quotations: true }
+          }
+        }
+      })
     ]);
 
     let responseRfqs = rfqs;
-    if (req.user?.role === 'SUPPLIER') {
+    if (req.user?.role==='SUPPLIER') {
       const supplierId = req.user.id;
       const rfqIds = rfqs.map((rfq) => rfq.id);
 
       const myQuotations = await prisma.quotation.findMany({
         where: {
           supplierId,
-          rfqId: { in: rfqIds },
+          rfqId: { in: rfqIds }
         },
         select: {
           rfqId: true,
           status: true,
           id: true,
-          price: true,
-        },
+          price: true
+        }
       });
 
       const quoteByRfqId = new Map(myQuotations.map((q) => [q.rfqId, q]));
@@ -82,9 +82,9 @@ export const getAllRfqs = async (req, res, next) => {
           total,
           page: pageNum,
           limit: limitNum,
-          totalPages: Math.ceil(total / limitNum),
-        },
-      },
+          totalPages: Math.ceil(total / limitNum)
+        }
+      }
     });
   } catch (error) {
     next(error);
